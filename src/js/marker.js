@@ -1,6 +1,6 @@
 // Set initial color value
 let color = "";
-const transparency = 0.5;//set highligh transparancy
+const transparency = 0.5; //set highligh transparancy
 
 // Handle color change event
 const colorInput = document.querySelector(".color-input");
@@ -16,35 +16,33 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-let counter = 1;
+let markCounter = 1;
 
 // Highlight selected text
 function highlightSelectedText() {
   const markInstance = new Mark(document.body);
 
   const range = getSelectionStartAndLength(document.body);
-  const start = range.start;
-  const length = range.end;
 
-  markInstance.markRanges([{ start, length }], {
+  markInstance.markRanges([range], {
     acrossElements: false,
     wildcards: "disabled",
     element: "mark",
     each: (element) => {
-      element.classList.add(`highlight-${counter}`);
+      element.classList.add(`highlight-${markCounter}`);
       element.style.backgroundColor = color;
     },
   });
 
-  counter += 1;
+  markCounter++;
 }
 
 function getSelectionStartAndLength(element) {
-  let start = 0,
-    length = 0;
+  let start = 0;
+  let length = 0;
   let sel, range, priorRange;
 
-  if (typeof window.getSelection !== "undefined") {
+  if (window.getSelection) {
     sel = window.getSelection();
     if (sel.rangeCount) {
       range = sel.getRangeAt(0).cloneRange();
@@ -56,10 +54,7 @@ function getSelectionStartAndLength(element) {
         length = range.toString().length;
       }
     }
-  } else if (
-    typeof document.selection !== "undefined" &&
-    (sel = document.selection).type !== "Control"
-  ) {
+  } else if (document.selection && (sel = document.selection).type) {
     range = sel.createRange();
     priorRange = document.body.createTextRange();
     priorRange.moveToElementText(element);
@@ -70,7 +65,7 @@ function getSelectionStartAndLength(element) {
 
   return {
     start,
-    end:length,
+    length,
   };
 }
 
