@@ -1,3 +1,15 @@
+const toolsbar = document.createElement("div");
+toolsbar.setAttribute("id", "toolbar");
+toolsbar.innerHTML = `
+    <div>
+      <input type="color" class="color-input" value="#ffee00" />
+      <input type="checkbox" class="color-checkbox" value="#ffee00" id="color-checkbox"/>
+      <label for="color-checkbox">Highilight</label>
+    <div/>
+
+      `;
+document.body.prepend(toolsbar);
+
 // Set initial color value
 let color = "rgba(255, 238, 0, 0.5)";
 const transparency = 0.5; //set highligh transparancy
@@ -22,12 +34,12 @@ const data = JSON.parse(localStorage.getItem("highlights-data")) || [];
 
 // Highlight selected text
 const highlightSelectedText = (e) => {
-
+  const checkbox = document.querySelector('#color-checkbox')
   const range = getSelectionStartAndLength(document.body);
-  const start = range.start; 
-  const length = range.length; 
+  const start = range.start;
+  const length = range.length;
 
-  highlight(start,length,markCounter,color)
+  checkbox.checked && highlight(start, length, markCounter, color);
 
   if (!!start && !!length && !e.target.classList.contains("color-input")) {
     data.push({ start, length, color, counter: markCounter }); //sending data object
@@ -43,13 +55,13 @@ const renderHighlightings = () => {
 
   if (storeData?.length > 0) {
     storeData.forEach((el) => {
-      highlight(el.start,el.length,el.counter,el.color)
+      highlight(el.start, el.length, el.counter, el.color);
     });
   }
 };
 
 //Add highilighing mark
-const highlight = (start,length,counter,color) =>{
+const highlight = (start, length, counter, color) => {
   const markInstance = new Mark(document.body);
 
   markInstance.markRanges([{ start, length }], {
@@ -61,7 +73,7 @@ const highlight = (start,length,counter,color) =>{
       element.style.backgroundColor = color;
     },
   });
-}
+};
 
 //Get starting position and length of selected area
 const getSelectionStartAndLength = (element) => {
