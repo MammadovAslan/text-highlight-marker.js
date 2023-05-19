@@ -21,3 +21,8 @@
   /* background-color: hsla(0, 0%, 0%, 0.5); */
   transition: background-color 0.3s;
 }
+
+
+button{
+  color:rgba(255, 238, 0, 0.5);
+}
