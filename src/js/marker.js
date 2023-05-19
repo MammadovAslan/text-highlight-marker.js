@@ -1,10 +1,11 @@
 const toolsbar = document.createElement("div");
 toolsbar.setAttribute("id", "toolbar");
+toolsbar.classList.add("toolbar");
 toolsbar.innerHTML = `
-    <div>
-      <input type="color" class="color-input" value="#ffee00" />
-      <input type="checkbox" class="color-checkbox" value="#ffee00" id="color-checkbox"/>
-      <label for="color-checkbox">Highilight</label>
+    <div class="highlight-mark-tools">
+      <input type="color" class="color-input toolbar-element" value="#ffee00" />
+      <input type="checkbox" class="color-checkbox toolbar-element" value="#ffee00" id="color-checkbox"/>
+      <label for="color-checkbox" class="toolbar-element">Highlight</label>
     <div/>
 
       `;
@@ -34,14 +35,18 @@ const data = JSON.parse(localStorage.getItem("highlights-data")) || [];
 
 // Highlight selected text
 const highlightSelectedText = (e) => {
-  const checkbox = document.querySelector('#color-checkbox')
+  const checkbox = document.querySelector("#color-checkbox");
   const range = getSelectionStartAndLength(document.body);
+  const classNames = ["toolbar", "toolbar-element"];
+  const isToolbar = classNames.some((className) => e.target.classList.contains(className));
   const start = range.start;
   const length = range.length;
 
-  checkbox.checked && highlight(start, length, markCounter, color);
+  console.log(isToolbar);
 
-  if (!!start && !!length && !e.target.classList.contains("color-input")) {
+  checkbox.checked && !isToolbar && highlight(start, length, markCounter, color);
+
+  if (!!start && !!length && !e.target.classList.contains("color-input") && !isToolbar) {
     data.push({ start, length, color, counter: markCounter }); //sending data object
     localStorage.setItem("highlights-data", JSON.stringify(data));
   }
