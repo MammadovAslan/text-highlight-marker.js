@@ -17,32 +17,53 @@ const hexToRgba = (hex, alpha) => {
 };
 
 let markCounter = 1;
-const data = []; //!This data should be sent to the server
+//DATA
+const data = JSON.parse(localStorage.getItem("highlights-data")) || [];
 
 // Highlight selected text
 const highlightSelectedText = (e) => {
-  const markInstance = new Mark(document.body);
 
   const range = getSelectionStartAndLength(document.body);
-  const start = range.start; // || data.range.start
-  const length = range.length; // || data.range.length
+  const start = range.start; 
+  const length = range.length; 
 
-  markInstance.markRanges([range], {
-    acrossElements: false,
-    wildcards: "disabled",
-    element: "mark",
-    each: (element) => {
-      element.classList.add(`highlight-${markCounter}`);
-      element.style.backgroundColor = color;
-    },
-  });
+  highlight(start,length,markCounter,color)
 
-  if (!!start && !!length && !e.target.classList.contains("color-input"))
+  if (!!start && !!length && !e.target.classList.contains("color-input")) {
     data.push({ start, length, color, counter: markCounter }); //sending data object
+    localStorage.setItem("highlights-data", JSON.stringify(data));
+  }
 
   markCounter++;
 };
 
+//Render highlighting marks from server/storage
+const renderHighlightings = () => {
+  const storeData = JSON.parse(localStorage.getItem("highlights-data"));
+
+  if (storeData?.length > 0) {
+    storeData.forEach((el) => {
+      highlight(el.start,el.length,el.counter,el.color)
+    });
+  }
+};
+
+//Add highilighing mark
+const highlight = (start,length,counter,color) =>{
+  const markInstance = new Mark(document.body);
+
+  markInstance.markRanges([{ start, length }], {
+    acrossElements: false,
+    wildcards: "disabled",
+    element: "mark",
+    each: (element) => {
+      element.classList.add(`highlight-${counter}`);
+      element.style.backgroundColor = color;
+    },
+  });
+}
+
+//Get starting position and length of selected area
 const getSelectionStartAndLength = (element) => {
   let start = 0;
   let length = 0;
@@ -76,3 +97,4 @@ const getSelectionStartAndLength = (element) => {
 };
 
 document.addEventListener("mouseup", highlightSelectedText);
+renderHighlightings();
