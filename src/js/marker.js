@@ -1,3 +1,7 @@
+//DATA
+const data = JSON.parse(localStorage.getItem("highlights-data")) || [];
+let markCounter = data?.at(-1)?.counter + 1 || 1;
+
 //*Add font-awesome CDN
 const fontAwesome = document.createElement("link");
 fontAwesome.rel = "stylesheet";
@@ -15,13 +19,16 @@ document.head.append(cssFile);
 //* Add Toolsbar in HTML body
 const toolsbar = document.createElement("div");
 toolsbar.setAttribute("id", "toolbar");
-toolsbar.classList.add("toolbar");
+toolsbar.classList.add("toolsbar");
+
+let disableUndo = data.length > 0 ? "" : "disabled";
+
 toolsbar.innerHTML = `
     <div class="highlight-mark-tools">
       <input type="color" class="color-input toolbar-element" value="#ffee00" />
       <input type="checkbox" class="color-checkbox toolbar-element" value="#ffee00" id="color-checkbox"/>
       <label for="color-checkbox" class="color-label toolbar-element"><i class="fa-solid fa-marker "></i></label>
-      <button disabled class="undo-marker-button toolbar-element"><i class="fa-solid fa-rotate-left"></i></button>
+      <button ${disableUndo} class="undo-marker-button toolbar-element"><i class="fa-solid fa-rotate-left"></i></button>
     <div/>
       `;
 document.body.prepend(toolsbar);
@@ -44,28 +51,55 @@ const hexToRgba = (hex, alpha) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-let markCounter = 1;
-//DATA
-const data = JSON.parse(localStorage.getItem("highlights-data")) || [];
-
 // Highlight selected text
 const highlightSelectedText = (e) => {
   const checkbox = document.querySelector("#color-checkbox");
   const range = getSelectionStartAndLength(document.body);
-  const classNames = ["toolbar", "toolbar-element"];
+  const classNames = [
+    "toolsbar",
+    "toolbar-element",
+    "color-label",
+    "highlight-mark-tools",
+    "fa-solid",
+    "fa-marker",
+  ];
   const isToolbar = classNames.some((className) => e.target.classList.contains(className));
   const start = range.start;
   const length = range.length;
+  const undoButton = document.querySelector(".undo-marker-button");
+  undoButton.addEventListener("click", undoMark);
 
-  checkbox.checked && !isToolbar && highlight(start, length, markCounter, color);
-
-  if (!!start && !!length && !e.target.classList.contains("color-input") && !isToolbar) {
+  if (
+    !!start &&
+    !!length &&
+    !e.target.classList.contains("color-input") &&
+    !isToolbar &&
+    checkbox.checked
+  ) {
+    highlight(start, length, markCounter, color);
     data.push({ start, length, color, counter: markCounter }); //sending data object
+    localStorage.setItem("highlights-data", JSON.stringify(data));
+    markCounter++;
+    undoButton.disabled = false;
+  }
+};
+
+function undoMark() {
+  const markInstance = new Mark(document.body);
+
+  if (markCounter > 0) {
+    markCounter--;
+    markInstance.unmark({
+      className: `highlight-${markCounter}`,
+    });
+    data.pop();
     localStorage.setItem("highlights-data", JSON.stringify(data));
   }
 
-  markCounter++;
-};
+  if (data.length === 0) {
+    this.disabled = true;
+  }
+}
 
 //Render highlighting marks from server/storage
 const renderHighlightings = () => {
@@ -81,13 +115,13 @@ const renderHighlightings = () => {
 //Add highilighing mark
 const highlight = (start, length, counter, color) => {
   const markInstance = new Mark(document.body);
-
   markInstance.markRanges([{ start, length }], {
     acrossElements: false,
     wildcards: "disabled",
     element: "mark",
     each: (element) => {
       element.classList.add(`highlight-${counter}`);
+      element.classList.add("highlight-mark");
       element.style.backgroundColor = color;
     },
   });

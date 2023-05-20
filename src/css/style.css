@@ -1,7 +1,7 @@
 #toolbar {
-  padding: 12px;
+  padding: 8px 12px;
   position: fixed;
-  top: 10px;
+  top: 15px;
   left: 150px;
   z-index: 1000;
   display: flex;
@@ -57,11 +57,13 @@ button {
   font-size: 18px;
 }
 
-.color-label:hover::after {
+.color-label:hover::after,
+.undo-marker-button:hover::after {
   display: block;
 }
 
-.color-label::after {
+.color-label::after,
+.undo-marker-button::after {
   content: "Mark";
   display: none;
   position: absolute;
@@ -102,6 +104,22 @@ button {
   outline: none;
   border: none;
   background-color: transparent;
+  position: relative;
+  font-size: 18px;
+  transition: 0.1s ease;
+}
+
+.undo-marker-button::after {
+  top: -140%;
+  content: "Undo";
+}
+
+.undo-marker-button:active {
+  transform: scale(0.9);
+}
+
+.undo-marker-button:active::after {
+  display: none;
 }
 
 @keyframes fade {
