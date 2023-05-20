@@ -1,6 +1,5 @@
 #toolbar {
-  width: 140px;
-  height: 50px;
+  padding: 12px;
   position: fixed;
   top: 10px;
   left: 150px;
@@ -8,7 +7,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
   background: rgba(255, 255, 255, 0);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -17,12 +15,100 @@
   border: 1px solid rgba(63, 60, 60, 0.534);
 }
 
+input,
+label,
+button {
+  cursor: pointer;
+}
+
 .highlight {
-  /* background-color: hsla(0, 0%, 0%, 0.5); */
   transition: background-color 0.3s;
 }
 
+.highlight-mark-tools {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+  border-radius: 8px;
+}
 
-button{
-  color:rgba(255, 238, 0, 0.5);
+.color-input {
+  background-color: transparent;
+  border: none;
+  height: 33px;
+  width: 33px;
+}
+
+.color-input::-webkit-color-swatch {
+  border-radius: 50%;
+  border: 1px solid #000000;
+}
+
+#color-checkbox {
+  display: none;
+}
+
+.color-label {
+  padding: 4px;
+  border-radius: 4px;
+  transition: 0.3s ease;
+  position: relative;
+  font-size: 18px;
+}
+
+.color-label:hover::after {
+  display: block;
+}
+
+.color-label::after {
+  content: "Mark";
+  display: none;
+  position: absolute;
+  color: #111;
+  top: -100%;
+  left: 0;
+  background-color: #fff;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+  animation: fade 0.3s ease;
+}
+.color-label::before {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 3px;
+  background-color: #111;
+  border-radius: 4px;
+  width: 70%;
+  height: 2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+  animation: fade 0.3s ease;
+}
+
+#color-checkbox:checked ~ .color-label {
+  background-color: rgba(201, 195, 195, 0.644);
+  color: rgb(25, 128, 25);
+}
+#color-checkbox:checked ~ .color-label::before {
+  background-color: rgb(25, 128, 25);
+}
+
+.undo-marker-button {
+  outline: none;
+  border: none;
+  background-color: transparent;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

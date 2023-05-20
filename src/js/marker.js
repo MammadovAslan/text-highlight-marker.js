@@ -1,3 +1,18 @@
+//*Add font-awesome CDN
+const fontAwesome = document.createElement("link");
+fontAwesome.rel = "stylesheet";
+fontAwesome.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css";
+fontAwesome.crossorigin = "anonymous";
+fontAwesome.referrerpolicy = "no-referrer";
+document.head.append(fontAwesome);
+
+//*Add CSS in head
+const cssFile = document.createElement("link");
+cssFile.rel = "stylesheet";
+cssFile.href = "./src/css/style.css";
+document.head.append(cssFile);
+
+//* Add Toolsbar in HTML body
 const toolsbar = document.createElement("div");
 toolsbar.setAttribute("id", "toolbar");
 toolsbar.classList.add("toolbar");
@@ -5,9 +20,9 @@ toolsbar.innerHTML = `
     <div class="highlight-mark-tools">
       <input type="color" class="color-input toolbar-element" value="#ffee00" />
       <input type="checkbox" class="color-checkbox toolbar-element" value="#ffee00" id="color-checkbox"/>
-      <label for="color-checkbox" class="toolbar-element">Highlight</label>
+      <label for="color-checkbox" class="color-label toolbar-element"><i class="fa-solid fa-marker "></i></label>
+      <button disabled class="undo-marker-button toolbar-element"><i class="fa-solid fa-rotate-left"></i></button>
     <div/>
-
       `;
 document.body.prepend(toolsbar);
 
@@ -41,8 +56,6 @@ const highlightSelectedText = (e) => {
   const isToolbar = classNames.some((className) => e.target.classList.contains(className));
   const start = range.start;
   const length = range.length;
-
-  console.log(isToolbar);
 
   checkbox.checked && !isToolbar && highlight(start, length, markCounter, color);
 
