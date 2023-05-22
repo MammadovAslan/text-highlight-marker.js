@@ -65,9 +65,7 @@ const hexToRgba = (hex, alpha) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-// Highlight selected text
-const highlightSelectedText = (e) => {
-  const range = getSelectionStartAndLength(document.body);
+const excludeToolbar = (event) => {
   const classNames = [
     "toolsbar",
     "toolbar-element",
@@ -76,17 +74,30 @@ const highlightSelectedText = (e) => {
     "fa-solid",
     "fa-marker",
     "fa-plus",
+    "modal-form",
+    "comment-modal",
+    "comment-input",
+    "submit-comment-button",
+    "color-input"
   ];
-  const isToolbar = classNames.some((className) => e.target.classList.contains(className));
+  const isToolbar = classNames.some((className) => event.target.classList.contains(className));
+
+  return isToolbar;
+};
+
+// ------------------Highlight selected text------------------
+const highlightSelectedText = (e) => {
+  const range = getSelectionStartAndLength(document.body);
+
   const start = range.start;
   const length = range.length;
   const undoButton = document.querySelector(".undo-marker-button");
   undoButton.addEventListener("click", undoMark);
 
+  const isToolbar = excludeToolbar(e);
   if (
     !!start &&
     !!length &&
-    !e.target.classList.contains("color-input") &&
     !isToolbar &&
     colorCheckbox.checked
   ) {
@@ -115,7 +126,7 @@ function undoMark() {
   }
 }
 
-//Render highlighting marks from server/storage
+//-----------Render highlighting marks from server/storage-----------
 const renderHighlightings = () => {
   const storeData = JSON.parse(localStorage.getItem("highlights-data"));
 
@@ -126,23 +137,22 @@ const renderHighlightings = () => {
   }
 };
 
-//Add highilighing mark
+//-----------------Add highilighing mark-----------------
 const highlight = (start, length, counter, color) => {
   const markInstance = new Mark(document.body);
   markInstance.markRanges([{ start, length }], {
     acrossElements: false,
     wildcards: "disabled",
     element: "mark",
-    esclude: ["style"],
+    esclude: ["style", "iframe"],
     each: (element) => {
       element.classList.add(`highlight-${counter}`);
-      element.classList.add("highlight-mark");
       element.style.backgroundColor = color;
     },
   });
 };
 
-//Get starting position and length of selected area
+//--------Get starting position and length of selected area--------
 const getSelectionStartAndLength = (element) => {
   let start = 0;
   let length = 0;
@@ -188,10 +198,67 @@ function removeAllStyleTags() {
   });
 }
 
-function addComment() {
-  const markInstance = new Mark(document.body);
-}
+//------------Adding comments---------------
+let commentCount = 1;
+const addComment = (e) => {
+  e.stopPropagation();
+  const isToolbar = excludeToolbar(e);
 
+  if (commentCheckbox.checked && !isToolbar) {
+    // const range = getSelectionStartAndLength(document.body);
+    // const start = range.start;
+
+    // const markInstance = new Mark(document.body);
+    // markInstance.markRanges([{ start, length: 1 }], {
+    //   acrossElements: false,
+    //   wildcards: "disabled",
+    //   element: "mark",
+    //   esclude: ["style"],
+    //   each: (element) => {
+    //     element.classList.add(`comment-${commentCount}`);
+    //     element.classList.add(`comment`);
+
+    //   },
+    // });
+    const div = document.createElement("div");
+    div.style.width = "200px";
+    div.style.height = "200px";
+    div.style.backgroundColor = "rgba(0,0,0,0.5)";
+    div.style.position = "absolute";
+    div.style.top = offsetObj.top + "px";
+    div.style.left = offsetObj.left + "px";
+    e.target.append(div);
+  }
+};
+
+const offsetObj = {};
+document.addEventListener("click", addComment);
 document.addEventListener("mouseup", highlightSelectedText);
+
+// document.addEventListener("mouseover", (e) => {
+//   let k = e.target;
+
+//   const div = document.createElement("div");
+//   // div.classList.add("selected-element-line");
+//   // div.style.width = "100%";
+//   // div.style.height = "100%";
+//   // div.style.backgroundColor = "rgba(1,1,1,0.3)";
+//   // div.style.position = "absolute";
+//   // div.style.top = k.offsetTop;
+//   // div.style.left = k.offsetLeft;
+//   k.append(div);
+//   offsetObj.top = k.offsetTop;
+//   offsetObj.left = k.offsetLeft;
+// });
+
+// document.addEventListener("mouseout", (e) => {
+//   let k = e.target;
+//   const line = document.querySelector(".selected-element-line");
+//   line.remove();
+// });
 renderHighlightings();
 removeAllStyleTags();
+
+// <!-- Main JS -->
+// <script src="https://cdn.jsdelivr.net/npm/mark.js"></script>
+// <script type="module" src="./src/js/marker.js"></script>
