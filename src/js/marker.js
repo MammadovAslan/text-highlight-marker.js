@@ -51,6 +51,7 @@ colorCheckbox.addEventListener("change", () => {
   commentCheckbox.checked = false;
 });
 
+//Add comment button/checkbox
 const commentCheckbox = document.querySelector("#add-comment-checkbox");
 commentCheckbox.addEventListener("change", () => {
   colorCheckbox.checked = false;
