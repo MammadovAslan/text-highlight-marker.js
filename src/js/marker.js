@@ -29,6 +29,9 @@ toolsbar.innerHTML = `
       <input type="checkbox" class="color-checkbox toolbar-element" value="#ffee00" id="color-checkbox"/>
       <label for="color-checkbox" class="color-label toolbar-element"><i class="fa-solid fa-marker "></i></label>
       <button ${disableUndo} class="undo-marker-button toolbar-element"><i class="fa-solid fa-rotate-left"></i></button>
+      <input type="checkbox" class="add-comment-checkbox toolbar-element" value="#ffee00" id="add-comment-checkbox"/>
+      <label for="add-comment-checkbox" class="add-comment-label toolbar-element"><i class="fa-solid fa-plus"></i></label>
+
     <div/>
       `;
 document.body.prepend(toolsbar);
@@ -43,6 +46,16 @@ colorInput.addEventListener("change", (e) => {
   color = hexToRgba(e.target.value, transparency);
 });
 
+const colorCheckbox = document.querySelector("#color-checkbox");
+colorCheckbox.addEventListener("change", () => {
+  commentCheckbox.checked = false;
+});
+
+const commentCheckbox = document.querySelector("#add-comment-checkbox");
+commentCheckbox.addEventListener("change", () => {
+  colorCheckbox.checked = false;
+});
+
 // Convert Hex to RGBA
 const hexToRgba = (hex, alpha) => {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -53,7 +66,6 @@ const hexToRgba = (hex, alpha) => {
 
 // Highlight selected text
 const highlightSelectedText = (e) => {
-  const checkbox = document.querySelector("#color-checkbox");
   const range = getSelectionStartAndLength(document.body);
   const classNames = [
     "toolsbar",
@@ -62,6 +74,7 @@ const highlightSelectedText = (e) => {
     "highlight-mark-tools",
     "fa-solid",
     "fa-marker",
+    "fa-plus",
   ];
   const isToolbar = classNames.some((className) => e.target.classList.contains(className));
   const start = range.start;
@@ -74,7 +87,7 @@ const highlightSelectedText = (e) => {
     !!length &&
     !e.target.classList.contains("color-input") &&
     !isToolbar &&
-    checkbox.checked
+    colorCheckbox.checked
   ) {
     highlight(start, length, markCounter, color);
     data.push({ start, length, color, counter: markCounter }); //sending data object
@@ -119,6 +132,7 @@ const highlight = (start, length, counter, color) => {
     acrossElements: false,
     wildcards: "disabled",
     element: "mark",
+    esclude: ["style"],
     each: (element) => {
       element.classList.add(`highlight-${counter}`);
       element.classList.add("highlight-mark");
@@ -160,5 +174,23 @@ const getSelectionStartAndLength = (element) => {
   };
 };
 
+function removeAllStyleTags() {
+  const styleTags = document.body.querySelectorAll("style");
+  styleTags.forEach((styleTag) => {
+    const styleTagPrime = styleTag.cloneNode(true);
+    document.head.append(styleTagPrime);
+  });
+
+  const tagsToRemove = document.body.querySelectorAll("style");
+  tagsToRemove.forEach((styleTag) => {
+    styleTag.remove();
+  });
+}
+
+function addComment() {
+  const markInstance = new Mark(document.body);
+}
+
 document.addEventListener("mouseup", highlightSelectedText);
 renderHighlightings();
+removeAllStyleTags();

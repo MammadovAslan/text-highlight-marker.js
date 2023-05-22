@@ -1,5 +1,5 @@
 #toolbar {
-  padding: 8px 12px;
+  padding: 4px 8px;
   position: fixed;
   top: 15px;
   left: 150px;
@@ -7,12 +7,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0);
-  border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(3.5px);
-  -webkit-backdrop-filter: blur(3.5px);
-  border: 1px solid rgba(63, 60, 60, 0.534);
+  background-color: rgba(117, 116, 116, 0.822);
+  border-radius: 8px;
 }
 
 input,
@@ -42,28 +38,32 @@ button {
 
 .color-input::-webkit-color-swatch {
   border-radius: 50%;
-  border: 1px solid #000000;
 }
 
-#color-checkbox {
+#color-checkbox,
+#add-comment-checkbox {
   display: none;
 }
 
-.color-label {
+.color-label,
+.add-comment-label {
   padding: 4px;
   border-radius: 4px;
   transition: 0.3s ease;
   position: relative;
   font-size: 18px;
+  color: #fff;
 }
 
 .color-label:hover::after,
-.undo-marker-button:hover::after {
+.undo-marker-button:hover::after,
+.add-comment-label:hover::after {
   display: block;
 }
 
 .color-label::after,
-.undo-marker-button::after {
+.undo-marker-button::after,
+.add-comment-label::after {
   content: "Mark";
   display: none;
   position: absolute;
@@ -82,18 +82,22 @@ button {
   position: absolute;
   bottom: 4px;
   left: 3px;
-  background-color: #111;
+  background-color: #fff;
   border-radius: 4px;
   width: 70%;
   height: 2px;
-  border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 12px;
   animation: fade 0.3s ease;
 }
 
-#color-checkbox:checked ~ .color-label {
-  background-color: rgba(201, 195, 195, 0.644);
+.add-comment-label::after {
+  content: "Comment";
+}
+
+#color-checkbox:checked ~ .color-label,
+#add-comment-checkbox:checked ~ .add-comment-label {
+  background-color: #fff;
   color: rgb(25, 128, 25);
 }
 #color-checkbox:checked ~ .color-label::before {
@@ -114,12 +118,20 @@ button {
   content: "Undo";
 }
 
-.undo-marker-button:active {
+.undo-marker-button:enabled {
+  color: #fff;
+}
+
+.undo-marker-button:enabled:active {
   transform: scale(0.9);
 }
 
-.undo-marker-button:active::after {
+.undo-marker-button:enabled:active::after {
   display: none;
+}
+
+.add-comment-button {
+  color: red;
 }
 
 @keyframes fade {
