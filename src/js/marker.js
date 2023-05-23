@@ -25,7 +25,7 @@ toolsbar.classList.add("toolsbar");
 let disableUndo = data.length > 0 ? "" : "disabled";
 
 
-//*TOOLBAR
+//*TOOLBAR component
 toolsbar.innerHTML = `
     <div class="highlight-mark-tools">
       <input type="color" class="color-input toolbar-element" value="#ffee00" />
@@ -122,7 +122,7 @@ const highlight = (start, length, counter, color) => {
 };
 
 //! ------------------Highlight selected text------------------
-//here we call highlight and undoMark functions
+//here we call highlight and undoMark functions(mouseup event on line 213)
 const highlightSelectedText = (e) => {
   const range = getSelectionStartAndLength(document.body);
 
